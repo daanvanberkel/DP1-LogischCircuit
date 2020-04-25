@@ -2,7 +2,6 @@ package nl.daanvanberkel.LogischCircuit.Controllers;
 
 import nl.daanvanberkel.LogischCircuit.Exceptions.UnsupportedGateTypeException;
 import nl.daanvanberkel.LogischCircuit.Models.*;
-import nl.daanvanberkel.LogischCircuit.Views.CircuitView;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,26 +9,25 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.stream.Stream;
 
-public class CircuitController {
-    private Circuit circuit;
-    private CircuitView circuitView;
-
-    private HashMap<String, Node> nodes = new HashMap<>();
+public class ReadFileController {
     private boolean parsingNodeDefinition = true;
+    private HashMap<String, Node> nodes;
+    private Circuit circuit;
 
-    public void buildCircuitFromFile(String path) {
+    public Circuit buildCircuitFromFile(String path) {
+        nodes = new HashMap<>();
         circuit = new Circuit();
 
         try {
             Stream<String> stream = Files.lines(Paths.get(path));
 
             stream
-                .forEach(this::handleLine);
+                    .forEach(this::handleLine);
         } catch (IOException e) {
             e.printStackTrace(); // TODO: Handle exception
         }
 
-        circuit.start();
+        return circuit;
     }
 
     private void handleLine(String line) {
@@ -86,12 +84,12 @@ public class CircuitController {
 
             nodes.put(nodeName, node);
 
-            if (nodeType.equals("INPUT_HIGH") || nodeType.equals("INPUT_LOW")) {
-                circuit.addInputNode(node);
+            if ((nodeType.equals("INPUT_HIGH") || nodeType.equals("INPUT_LOW"))) {
+                circuit.addInputNode((InputNode) node);
             }
 
             if (nodeType.equals("PROBE")) {
-                circuit.addOutputNode(node);
+                circuit.addOutputNode((OutputNode) node);
             }
         } else {
             // Connect nodes to each other
@@ -139,7 +137,7 @@ public class CircuitController {
 
     private Node createNode(String name, String nodeType) throws UnsupportedGateTypeException {
         Node node;
-        
+
         switch (nodeType) {
             case "INPUT_HIGH":
                 node = new InputNode(true);

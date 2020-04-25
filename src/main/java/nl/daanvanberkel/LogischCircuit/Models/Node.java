@@ -1,13 +1,15 @@
 package nl.daanvanberkel.LogischCircuit.Models;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 public abstract class Node {
     protected String name;
+    protected HashMap<Node, Boolean> values = new HashMap<>();
     protected ArrayList<Node> inputNodes = new ArrayList<>();
     protected ArrayList<Node> outputNodes = new ArrayList<>();
-    protected HashMap<Node, Boolean> values = new HashMap<>();
 
     public void addInputNode(Node node) {
         inputNodes.add(node);
@@ -17,12 +19,8 @@ public abstract class Node {
         outputNodes.add(node);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public List<Node> getOutputNodes() {
+        return Collections.unmodifiableList(outputNodes);
     }
 
     protected boolean hasValueForAllInputs() {
@@ -35,5 +33,15 @@ public abstract class Node {
         return true;
     }
 
-    abstract public void setInputValueFor(Node node, Boolean value);
+    public void setInputValueFor(Node node, boolean value) {
+        values.put(node, value);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

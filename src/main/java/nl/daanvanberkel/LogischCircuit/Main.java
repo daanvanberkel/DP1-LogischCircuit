@@ -9,7 +9,6 @@ public class Main {
 
     public Main() {
         CircuitController controller = new CircuitController();
-
-        controller.buildCircuitFromFile("/Users/daanvanberkel/Desktop/Circuits/Circuit2_Decoder.txt");
+        controller.showCircuit("/Users/daanvanberkel/Desktop/Circuits/Circuit1_FullAdder.txt");
     }
 }
