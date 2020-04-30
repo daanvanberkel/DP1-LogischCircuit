@@ -11,5 +11,6 @@ public class CircuitController {
 
         CircuitView circuitView = new CircuitView(circuit);
         circuitView.drawCircuit();
+        circuit.start();
     }
 }
