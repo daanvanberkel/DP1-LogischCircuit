@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/LogischCircuit.iml" filepath="$PROJECT_DIR$/LogischCircuit.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/LogischCircuit.iml" filepath="$PROJECT_DIR$/.idea/LogischCircuit.iml" />
     </modules>
   </component>
 </project>
