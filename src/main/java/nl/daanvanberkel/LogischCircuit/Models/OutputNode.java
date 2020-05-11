@@ -16,6 +16,9 @@ public class OutputNode extends Node {
         }
     }
 
+    @Override
+    public String getNodeType() { return "OUT"; }
+
     public boolean getResult() {
         return values.values().iterator().next();
     }

@@ -11,4 +11,7 @@ public class AndGate extends Gate {
 
         return true;
     }
+
+    @Override
+    public String getNodeType() { return "AND"; }
 }

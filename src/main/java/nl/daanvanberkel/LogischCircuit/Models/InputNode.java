@@ -12,4 +12,7 @@ public class InputNode extends Node {
             node.setInputValueFor(this, initialValue);
         }
     }
+
+    @Override
+    public String getNodeType() { return "IN"; }
 }

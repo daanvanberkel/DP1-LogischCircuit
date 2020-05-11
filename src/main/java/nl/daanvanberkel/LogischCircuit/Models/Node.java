@@ -11,6 +11,8 @@ public abstract class Node {
     protected ArrayList<Node> inputNodes = new ArrayList<>();
     protected ArrayList<Node> outputNodes = new ArrayList<>();
 
+    public abstract String getNodeType();
+
     public void addInputNode(Node node) {
         inputNodes.add(node);
     }

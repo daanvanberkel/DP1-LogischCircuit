@@ -15,4 +15,7 @@ public class NandGate extends Gate {
 
         return true;
     }
+
+    @Override
+    public String getNodeType() { return "NAND"; }
 }

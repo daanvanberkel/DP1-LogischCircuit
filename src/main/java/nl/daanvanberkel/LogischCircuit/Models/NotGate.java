@@ -5,4 +5,7 @@ public class NotGate extends Gate {
     protected boolean computeResult() {
         return !values.get(inputNodes.get(0));
     }
+
+    @Override
+    public String getNodeType() { return "NOT"; }
 }

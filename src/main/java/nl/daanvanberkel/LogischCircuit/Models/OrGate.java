@@ -11,4 +11,7 @@ public class OrGate extends Gate {
 
         return false;
     }
+
+    @Override
+    public String getNodeType() { return "OR"; }
 }

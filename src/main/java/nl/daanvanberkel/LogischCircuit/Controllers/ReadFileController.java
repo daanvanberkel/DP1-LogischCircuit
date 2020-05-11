@@ -23,6 +23,7 @@ public class ReadFileController {
 
             stream
                     .forEach(this::handleLine);
+            parsingNodeDefinition = true;
         } catch (IOException e) {
             e.printStackTrace(); // TODO: Handle exception
         }

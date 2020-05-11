@@ -15,4 +15,7 @@ public class NorGate extends Gate {
 
         return false;
     }
+
+    @Override
+    public String getNodeType() { return "NOR"; }
 }

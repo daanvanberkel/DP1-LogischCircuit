@@ -32,10 +32,9 @@ public class CircuitView extends JPanel {
 
         frame = new JFrame();
         frame.setTitle("LogischCircuit");
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
-    public void drawCircuit() {
+    public JPanel drawCircuit() {
         convertCircuitToLevels(circuit);
 
         System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
@@ -49,7 +48,7 @@ public class CircuitView extends JPanel {
             for(Node node : level.getValue()) {
                 org.graphstream.graph.Node gNode = graph.addNode(node.getName());
                 gNode.addAttribute("xy", x, y);
-                gNode.addAttribute("ui.label", node.getName());
+                gNode.addAttribute("ui.label", node.getName() + " " + node.getNodeType());
 
                 y += (WINDOW_HEIGHT / level.getValue().size());
             }
@@ -62,10 +61,7 @@ public class CircuitView extends JPanel {
         ViewPanel view = viewer.addDefaultView(false);
         add(view);
 
-        frame.add(this);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        return this;
     }
 
     private void addEdges(Graph graph) {
