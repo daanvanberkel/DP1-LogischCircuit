@@ -21,17 +21,10 @@ public class CircuitView extends JPanel {
     private static final int WINDOW_HEIGHT = 500;
 
     private Circuit circuit;
-    private JFrame frame;
     private HashMap<Integer, ArrayList<Node>> levels;
 
     public CircuitView(Circuit circuit) {
         this.circuit = circuit;
-
-        setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
-        setLayout(new GridLayout());
-
-        frame = new JFrame();
-        frame.setTitle("LogischCircuit");
     }
 
     public JPanel drawCircuit() {
