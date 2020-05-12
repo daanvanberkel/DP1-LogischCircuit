@@ -24,6 +24,7 @@ public class CircuitView extends JPanel {
     private HashMap<Integer, ArrayList<Node>> levels;
 
     public CircuitView(Circuit circuit) {
+        setLayout(new BorderLayout());
         this.circuit = circuit;
     }
 
@@ -32,7 +33,7 @@ public class CircuitView extends JPanel {
 
         System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
         Graph graph = new SingleGraph("circuit");
-        graph.addAttribute("ui.stylesheet", "node { shape: freeplane; fill-color: white; stroke-mode: plain; size-mode: fit; } edge { shape: freeplane; } edge:clicked { fill-color: #0f0; }");
+        graph.addAttribute("ui.stylesheet", "node { shape: freeplane; fill-color: white; stroke-mode: plain; size-mode: fit; } edge { shape: freeplane; }");
 
         for(Map.Entry<Integer, ArrayList<Node>> level : levels.entrySet()) {
             int x = level.getKey() * (WINDOW_WIDTH / levels.size());

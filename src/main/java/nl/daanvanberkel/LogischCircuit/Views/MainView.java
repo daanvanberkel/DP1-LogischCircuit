@@ -59,8 +59,8 @@ public class MainView extends JPanel{
 
         frame.setJMenuBar(menuBar);
 
-        panel = new JPanel();
-        frame.add(panel, BorderLayout.CENTER);
+        panel = new JPanel(new BorderLayout());
+        frame.setContentPane(panel);
 
         frame.pack();
         frame.setLocationRelativeTo(null);
