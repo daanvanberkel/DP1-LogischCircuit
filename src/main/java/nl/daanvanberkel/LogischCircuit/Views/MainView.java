@@ -1,23 +1,12 @@
 package nl.daanvanberkel.LogischCircuit.Views;
 
 import nl.daanvanberkel.LogischCircuit.Controllers.CircuitController;
-import nl.daanvanberkel.LogischCircuit.Models.Circuit;
-import org.jfree.util.Log;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class MainView extends JPanel{
     private JFrame frame;
@@ -67,7 +56,8 @@ public class MainView extends JPanel{
         frame.setVisible(true);
     }
 
-    public void getCircuit(String path){
+    public void getCircuit(String path) {
+        frame.setTitle("LogischCircuit - " + path);
         controller.showCircuit(path);
     }
 

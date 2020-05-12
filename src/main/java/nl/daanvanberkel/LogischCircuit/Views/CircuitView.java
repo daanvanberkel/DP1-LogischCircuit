@@ -1,13 +1,10 @@
 package nl.daanvanberkel.LogischCircuit.Views;
 
+import nl.daanvanberkel.LogischCircuit.Controllers.CircuitController;
 import nl.daanvanberkel.LogischCircuit.Models.Circuit;
 import nl.daanvanberkel.LogischCircuit.Models.InputNode;
 import nl.daanvanberkel.LogischCircuit.Models.Node;
 import nl.daanvanberkel.LogischCircuit.Models.OutputNode;
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.ui.swingViewer.ViewPanel;
-import org.graphstream.ui.view.Viewer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,55 +14,80 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class CircuitView extends JPanel {
-    private static final int WINDOW_WIDTH = 1000;
-    private static final int WINDOW_HEIGHT = 500;
 
     private Circuit circuit;
+    private CircuitController controller;
     private HashMap<Integer, ArrayList<Node>> levels;
+    private HashMap<Node, NodeView> nodeViews;
 
-    public CircuitView(Circuit circuit) {
-        setLayout(new BorderLayout());
+    public CircuitView(Circuit circuit, CircuitController controller) {
+        setLayout(null);
         this.circuit = circuit;
+        this.controller = controller;
     }
 
     public JPanel drawCircuit() {
+        nodeViews = new HashMap<>();
         convertCircuitToLevels(circuit);
 
-        System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
-        Graph graph = new SingleGraph("circuit");
-        graph.addAttribute("ui.stylesheet", "node { shape: freeplane; fill-color: white; stroke-mode: plain; size-mode: fit; } edge { shape: freeplane; }");
-
+        // Loop through all the node levels and create nodeViews
         for(Map.Entry<Integer, ArrayList<Node>> level : levels.entrySet()) {
-            int x = level.getKey() * (WINDOW_WIDTH / levels.size());
-            int y = 0;
-
             for(Node node : level.getValue()) {
-                org.graphstream.graph.Node gNode = graph.addNode(node.getName());
-                gNode.addAttribute("xy", x, y);
-                gNode.addAttribute("ui.label", node.getName() + " " + node.getNodeType());
+                NodeView nodeView = new NodeView(node, controller);
+                nodeView.setFont(getFont());
+                nodeView.init();
+                nodeViews.put(node, nodeView);
 
-                y += (WINDOW_HEIGHT / level.getValue().size());
+                add(nodeView);
             }
         }
-
-        addEdges(graph);
-
-        Viewer viewer = new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
-        viewer.disableAutoLayout();
-        ViewPanel view = viewer.addDefaultView(false);
-        add(view);
 
         return this;
     }
 
-    private void addEdges(Graph graph) {
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // Get window sizes
+        int width = getSize().width;
+        int height = getSize().height;
+        int spaceBetweenNodeLevels = (width / levels.size());
+
+        // Loop through all the node levels and set nodeView in the right place
         for(Map.Entry<Integer, ArrayList<Node>> level : levels.entrySet()) {
+            int x = (level.getKey() * spaceBetweenNodeLevels) - spaceBetweenNodeLevels;
+            int y = ((height / level.getValue().size()) / 2) - (getFontMetrics(getFont()).getHeight() / 2);
+
             for(Node node : level.getValue()) {
-                for(Node child : node.getOutputNodes()) {
-                    if (graph.getEdge(node.getName() + child.getName()) == null) {
-                        graph.addEdge(node.getName() + child.getName(), node.getName(), child.getName());
-                    }
+                NodeView nodeView = nodeViews.get(node);
+                nodeView.setBounds(x, y, nodeView.getPreferredSize().width, nodeView.getPreferredSize().height);
+                nodeView.paintComponent(g);
+
+                y += height / level.getValue().size();
+            }
+        }
+
+        // Draw edges between the nodes
+        for(Map.Entry<Node, NodeView> nodePoint : nodeViews.entrySet()) {
+            Node node = nodePoint.getKey();
+            NodeView nodeView = nodePoint.getValue();
+
+            for(Node oNode : node.getOutputNodes()) {
+                NodeView oNodeView = nodeViews.get(oNode);
+
+                if (node.getLastResult()) {
+                    g2.setColor(Color.GREEN);
+                } else {
+                    g2.setColor(Color.RED);
                 }
+
+                g2.drawLine(nodeView.getX() + nodeView.getWidth(), nodeView.getY() + (nodeView.getHeight() / 2), oNodeView.getX(), oNodeView.getY() + (oNodeView.getHeight() / 2));
+
+                g2.setColor(Color.BLACK);
             }
         }
     }

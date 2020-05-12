@@ -22,4 +22,9 @@ public class OutputNode extends Node {
     public boolean getResult() {
         return values.values().iterator().next();
     }
+
+    @Override
+    public boolean getLastResult() {
+        return values.values().iterator().next();
+    }
 }
