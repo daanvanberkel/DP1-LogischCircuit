@@ -1,11 +1,7 @@
 package nl.daanvanberkel.LogischCircuit.Models;
 
-public class InputNode extends Node {
-    private boolean initialValue;
-
-    public InputNode(boolean value) {
-        initialValue = value;
-    }
+public abstract class InputNode extends Node {
+    protected boolean initialValue;
 
     public void toggleValue() {
         initialValue = !initialValue;

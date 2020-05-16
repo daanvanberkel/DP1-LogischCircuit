@@ -1,56 +1,49 @@
 package nl.daanvanberkel.LogischCircuit.Controllers;
 
-import nl.daanvanberkel.LogischCircuit.Exceptions.UnsupportedGateTypeException;
-import nl.daanvanberkel.LogischCircuit.Models.*;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.stream.Stream;
 
 public class ReadFileController {
-    private boolean parsingNodeDefinition = true;
-    private HashMap<String, Node> nodes;
-    private Circuit circuit;
 
-    public Circuit buildCircuitFromFile(String path) {
-        nodes = new HashMap<>();
-        circuit = new Circuit();
+    private String[] readFile(String path) {
+        ArrayList<String> lines = new ArrayList<>();
 
         try {
             Stream<String> stream = Files.lines(Paths.get(path));
 
-            stream
-                    .forEach(this::handleLine);
-            parsingNodeDefinition = true;
+            stream.forEach(lines::add);
         } catch (IOException e) {
             e.printStackTrace(); // TODO: Handle exception
         }
 
-        return circuit;
+        return lines.toArray(new String[0]);
     }
 
-    private void handleLine(String line) {
-        if (line.length() < 1) {
-            parsingNodeDefinition = false;
-            return;
-        }
+    public HashMap<String, String> getNodes(String path) {
+        String[] lines = readFile(path);
+        HashMap<String, String> output = new HashMap<>();
 
-        if (line.charAt(0) == '#') {
-            return;
-        }
+        for (String line : lines) {
+            if (line.length() < 1) {
+                break;
+            }
 
-        if (parsingNodeDefinition) {
-            // Add new node to nodes map
-            boolean parsingName = true;
+            if (line.charAt(0) == '#') {
+                continue;
+            }
+
             String nodeName = "";
             String nodeType = "";
+            boolean parsingNodeName = true;
 
-            for(char c: line.toCharArray()) {
+            for (char c : line.toCharArray()) {
                 if (c == ':') {
                     // Found the end of the name
-                    parsingName = false;
+                    parsingNodeName = false;
                     continue;
                 }
 
@@ -64,7 +57,7 @@ public class ReadFileController {
                     continue;
                 }
 
-                if (parsingName) {
+                if (parsingNodeName) {
                     nodeName += c;
                 } else {
                     nodeType += c;
@@ -74,34 +67,33 @@ public class ReadFileController {
             nodeName = nodeName.trim();
             nodeType = nodeType.trim();
 
-            Node node;
+            output.put(nodeName, nodeType);
+        }
 
-            try {
-                node = createNode(nodeName, nodeType);
-            } catch (UnsupportedGateTypeException e) {
-                e.printStackTrace(); // TODO: Handle exception
-                return;
+        return output;
+    }
+
+    public HashMap<String, String> getNodeConnections(String path) {
+        String[] lines = readFile(path);
+        HashMap<String, String> output = new HashMap<>();
+
+        for (String line : lines) {
+            if (line.length() < 1) {
+                continue;
             }
 
-            nodes.put(nodeName, node);
-
-            if ((nodeType.equals("INPUT_HIGH") || nodeType.equals("INPUT_LOW"))) {
-                circuit.addInputNode((InputNode) node);
+            if (line.charAt(0) == '#') {
+                continue;
             }
 
-            if (nodeType.equals("PROBE")) {
-                circuit.addOutputNode((OutputNode) node);
-            }
-        } else {
-            // Connect nodes to each other
-            boolean parsingName = true;
             String nodeName = "";
             String connectingNodeNames = "";
+            boolean parsingNodeName = true;
 
             for(char c: line.toCharArray()) {
                 if (c == ':') {
                     // Found the end of the name
-                    parsingName = false;
+                    parsingNodeName = false;
                     continue;
                 }
 
@@ -115,7 +107,7 @@ public class ReadFileController {
                     continue;
                 }
 
-                if (parsingName) {
+                if (parsingNodeName) {
                     nodeName += c;
                 } else {
                     connectingNodeNames += c;
@@ -125,54 +117,9 @@ public class ReadFileController {
             nodeName = nodeName.trim();
             connectingNodeNames = connectingNodeNames.trim();
 
-            Node node = nodes.get(nodeName);
-
-            for(String connectingNodeName : connectingNodeNames.split(",")) {
-                Node connectingNode = nodes.get(connectingNodeName);
-
-                node.addOutputNode(connectingNode);
-                connectingNode.addInputNode(node);
-            }
-        }
-    }
-
-    private Node createNode(String name, String nodeType) throws UnsupportedGateTypeException {
-        Node node;
-
-        switch (nodeType) {
-            case "INPUT_HIGH":
-                node = new InputNode(true);
-                break;
-            case "INPUT_LOW":
-                node = new InputNode(false);
-                break;
-            case "PROBE":
-                node = new OutputNode();
-                break;
-            case "AND":
-                node = new AndGate();
-                break;
-            case "OR":
-                node = new OrGate();
-                break;
-            case "NOT":
-                node = new NotGate();
-                break;
-            case "NAND":
-                node = new NandGate();
-                break;
-            case "NOR":
-                node = new NorGate();
-                break;
-            case "XOR":
-                node = new XorGate();
-                break;
-            default:
-                throw new UnsupportedGateTypeException(nodeType);
+            output.put(nodeName, connectingNodeNames);
         }
 
-        node.setName(name);
-
-        return node;
+        return output;
     }
 }

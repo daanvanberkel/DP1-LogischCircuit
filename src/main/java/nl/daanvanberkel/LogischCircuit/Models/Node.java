@@ -17,6 +17,10 @@ public abstract class Node {
         inputNodes.add(node);
     }
 
+    public List<Node> getInputNodes() {
+        return Collections.unmodifiableList(inputNodes);
+    }
+
     public void addOutputNode(Node node) {
         outputNodes.add(node);
     }
