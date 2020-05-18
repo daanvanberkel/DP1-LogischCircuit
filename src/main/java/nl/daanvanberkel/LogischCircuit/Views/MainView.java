@@ -66,4 +66,8 @@ public class MainView extends JPanel{
         panel.add(circuit);
         panel.revalidate();
     }
+
+    public void showError(String errorMessage){
+        JOptionPane.showMessageDialog(null, errorMessage);
+    }
 }
