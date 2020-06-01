@@ -1,10 +1,7 @@
 package nl.daanvanberkel.LogischCircuit.Views;
 
 import nl.daanvanberkel.LogischCircuit.Controllers.CircuitController;
-import nl.daanvanberkel.LogischCircuit.Models.Circuit;
-import nl.daanvanberkel.LogischCircuit.Models.InputNode;
-import nl.daanvanberkel.LogischCircuit.Models.Node;
-import nl.daanvanberkel.LogischCircuit.Models.OutputNode;
+import nl.daanvanberkel.LogischCircuit.Models.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,8 +14,8 @@ public class CircuitView extends JPanel {
 
     private Circuit circuit;
     private CircuitController controller;
-    private HashMap<Integer, ArrayList<Node>> levels;
-    private HashMap<Node, NodeView> nodeViews;
+    private HashMap<Integer, ArrayList<ICircuitComponent>> levels;
+    private HashMap<ICircuitComponent, NodeView> nodeViews;
 
     public CircuitView(Circuit circuit, CircuitController controller) {
         setLayout(null);
@@ -31,8 +28,8 @@ public class CircuitView extends JPanel {
         convertCircuitToLevels(circuit);
 
         // Loop through all the node levels and create nodeViews
-        for(Map.Entry<Integer, ArrayList<Node>> level : levels.entrySet()) {
-            for(Node node : level.getValue()) {
+        for(Map.Entry<Integer, ArrayList<ICircuitComponent>> level : levels.entrySet()) {
+            for(ICircuitComponent node : level.getValue()) {
                 NodeView nodeView = new NodeView(node, controller);
                 nodeView.setFont(getFont());
                 nodeView.init();
@@ -58,11 +55,11 @@ public class CircuitView extends JPanel {
         int spaceBetweenNodeLevels = (width / levels.size());
 
         // Loop through all the node levels and set nodeView in the right place
-        for(Map.Entry<Integer, ArrayList<Node>> level : levels.entrySet()) {
+        for(Map.Entry<Integer, ArrayList<ICircuitComponent>> level : levels.entrySet()) {
             int x = (level.getKey() * spaceBetweenNodeLevels) - spaceBetweenNodeLevels;
             int y = ((height / level.getValue().size()) / 2) - (getFontMetrics(getFont()).getHeight() / 2);
 
-            for(Node node : level.getValue()) {
+            for(ICircuitComponent node : level.getValue()) {
                 NodeView nodeView = nodeViews.get(node);
                 nodeView.setBounds(x, y, nodeView.getPreferredSize().width, nodeView.getPreferredSize().height);
                 nodeView.paintComponent(g);
@@ -72,14 +69,20 @@ public class CircuitView extends JPanel {
         }
 
         // Draw edges between the nodes
-        for(Map.Entry<Node, NodeView> nodePoint : nodeViews.entrySet()) {
-            Node node = nodePoint.getKey();
+        for(Map.Entry<ICircuitComponent, NodeView> nodePoint : nodeViews.entrySet()) {
+            ICircuitComponent node = nodePoint.getKey();
             NodeView nodeView = nodePoint.getValue();
 
-            for(Node oNode : node.getOutputNodes()) {
+            if (!(node instanceof CircuitComposite)) {
+                continue;
+            }
+
+            CircuitComposite composite = (CircuitComposite) node;
+
+            for(ICircuitComponent oNode : composite.getChildren()) {
                 NodeView oNodeView = nodeViews.get(oNode);
 
-                if (node.getLastResult()) {
+                if (composite.getLastResult()) {
                     g2.setColor(Color.GREEN);
                 } else {
                     g2.setColor(Color.RED);
@@ -97,27 +100,21 @@ public class CircuitView extends JPanel {
 
         levels.put(1, new ArrayList<>());
 
-        for(InputNode node : circuit.getInputNodes()) {
+        for(ICircuitComponent node : circuit.getChildren()) {
             levels.get(1).add(node);
 
             addCircuitLevel(node, 2);
         }
-
-        Integer highestLevel = levels.size();
-
-        // Add all output nodes to the highest level
-        for(OutputNode node : circuit.getOutputNodes()) {
-            Integer currentLevel = getNodeLevel(node);
-
-            if (currentLevel != null && currentLevel < highestLevel) {
-                levels.get(currentLevel).remove(node);
-                levels.get(highestLevel).add(node);
-            }
-        }
     }
 
-    private void addCircuitLevel(Node node, int level) {
-        if (node.getOutputNodes().size() < 1) {
+    private void addCircuitLevel(ICircuitComponent node, int level) {
+        if (!(node instanceof CircuitComposite)) {
+            return;
+        }
+
+        CircuitComposite composite = (CircuitComposite) node;
+
+        if (composite.getChildren().size() < 1) {
             return;
         }
 
@@ -125,7 +122,7 @@ public class CircuitView extends JPanel {
             levels.put(level, new ArrayList<>());
         }
         
-        for(Node n : node.getOutputNodes()) {
+        for(ICircuitComponent n : composite.getChildren()) {
             // Check if node is already in a level
             Integer nodeLevel = getNodeLevel(n);
             if (nodeLevel != null) {
@@ -142,7 +139,7 @@ public class CircuitView extends JPanel {
         }
     }
 
-    private Integer getNodeLevel(Node node) {
+    private Integer getNodeLevel(ICircuitComponent node) {
         Iterator<Integer> iterator = levels.keySet().iterator();
 
         while(iterator.hasNext()) {

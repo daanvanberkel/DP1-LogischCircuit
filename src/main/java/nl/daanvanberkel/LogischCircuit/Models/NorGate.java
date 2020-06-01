@@ -2,10 +2,12 @@ package nl.daanvanberkel.LogischCircuit.Models;
 
 public class NorGate extends Gate {
     @Override
-    protected boolean computeResult() {
-        return !values.values().contains(true);
+    public Boolean computeResult() {
+        return !values.containsValue(true);
     }
 
     @Override
-    public String getNodeType() { return "NOR"; }
+    public String getType() {
+        return "NOR";
+    }
 }

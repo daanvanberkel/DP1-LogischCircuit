@@ -12,10 +12,10 @@ public class XorGateTests {
         XorGate input2 = new XorGate();
 
         XorGate gate = new XorGate();
-        gate.addInputNode(input1);
-        gate.addInputNode(input2);
-        gate.setInputValueFor(input1, false);
-        gate.setInputValueFor(input2, false);
+        gate.addChild(input1);
+        gate.addChild(input2);
+        gate.setValue(input1, false);
+        gate.setValue(input2, false);
 
         assertFalse(gate.computeResult());
     }
@@ -26,10 +26,10 @@ public class XorGateTests {
         XorGate input2 = new XorGate();
 
         XorGate gate = new XorGate();
-        gate.addInputNode(input1);
-        gate.addInputNode(input2);
-        gate.setInputValueFor(input1, true);
-        gate.setInputValueFor(input2, false);
+        gate.addChild(input1);
+        gate.addChild(input2);
+        gate.setValue(input1, true);
+        gate.setValue(input2, false);
 
         assertTrue(gate.computeResult());
     }
@@ -40,10 +40,10 @@ public class XorGateTests {
         XorGate input2 = new XorGate();
 
         XorGate gate = new XorGate();
-        gate.addInputNode(input1);
-        gate.addInputNode(input2);
-        gate.setInputValueFor(input1, true);
-        gate.setInputValueFor(input2, true);
+        gate.addChild(input1);
+        gate.addChild(input2);
+        gate.setValue(input1, true);
+        gate.setValue(input2, true);
 
         assertFalse(gate.computeResult());
     }
@@ -52,7 +52,7 @@ public class XorGateTests {
     public void xorShouldReturnRightType() {
         XorGate gate = new XorGate();
 
-        assertEquals("XOR", gate.getNodeType());
+        assertEquals("XOR", gate.getType());
     }
 
 }

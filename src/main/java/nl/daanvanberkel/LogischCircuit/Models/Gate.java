@@ -1,31 +1,21 @@
 package nl.daanvanberkel.LogischCircuit.Models;
 
-public abstract class Gate extends Node {
+import java.util.HashMap;
+import java.util.Map;
 
-    protected boolean lastResult;
-
-    public boolean getLastResult() {
-        return lastResult;
-    }
-
-    protected abstract boolean computeResult();
-
-    protected void pushOutputToNextNodes() {
-        boolean result = computeResult();
-
-        lastResult = result;
-
-        for(Node node : outputNodes) {
-            node.setInputValueFor(this, result);
-        }
-    }
+public abstract class Gate extends CircuitComposite {
+    protected Map<ICircuitComponent, Boolean> values = new HashMap<>();
 
     @Override
-    public void setInputValueFor(Node node, boolean value) {
-        super.setInputValueFor(node, value);
+    public void setValue(ICircuitComponent sender, Boolean value) {
+        values.put(sender, value);
 
-        if (hasValueForAllInputs()) {
-            pushOutputToNextNodes();
+        lastResult = computeResult();
+
+        for (ICircuitComponent child : children) {
+            child.setValue(this, lastResult);
         }
     }
+
+    public abstract Boolean computeResult();
 }
