@@ -2,10 +2,16 @@ package nl.daanvanberkel.LogischCircuit.Models;
 
 public class NotGate extends Gate {
     @Override
-    protected boolean computeResult() {
-        return !values.get(inputNodes.get(0));
+    public Boolean computeResult() {
+        if (values.size() < 1) {
+            return false;
+        }
+
+        return !values.values().iterator().next();
     }
 
     @Override
-    public String getNodeType() { return "NOT"; }
+    public String getType() {
+        return "NOT";
+    }
 }

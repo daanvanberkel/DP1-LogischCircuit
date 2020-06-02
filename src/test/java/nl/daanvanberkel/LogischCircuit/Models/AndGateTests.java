@@ -14,10 +14,10 @@ public class AndGateTests {
         AndGate input2 = new AndGate();
 
         AndGate gate = new AndGate();
-        gate.addInputNode(input1);
-        gate.addInputNode(input2);
-        gate.setInputValueFor(input1, true);
-        gate.setInputValueFor(input2, true);
+        gate.addChild(input1);
+        gate.addChild(input2);
+        gate.setValue(input1,true);
+        gate.setValue(input2, true);
 
         assertTrue(gate.computeResult());
     }
@@ -28,10 +28,10 @@ public class AndGateTests {
         AndGate input2 = new AndGate();
 
         AndGate gate = new AndGate();
-        gate.addInputNode(input1);
-        gate.addInputNode(input2);
-        gate.setInputValueFor(input1, true);
-        gate.setInputValueFor(input2, false);
+        gate.addChild(input1);
+        gate.addChild(input2);
+        gate.setValue(input1, true);
+        gate.setValue(input2, false);
 
         assertFalse(gate.computeResult());
     }
@@ -40,6 +40,6 @@ public class AndGateTests {
     public void andGateShouldReturnTheRightType() {
         AndGate gate = new AndGate();
 
-        assertEquals("AND", gate.getNodeType());
+        assertEquals("AND", gate.getType());
     }
 }

@@ -1,30 +1,37 @@
 package nl.daanvanberkel.LogischCircuit.Models;
 
-public class OutputNode extends Node {
-    private OutputHandler outputHandler;
+import java.util.HashMap;
+import java.util.Map;
 
-    public void setOutputHandler(OutputHandler outputHandler) {
-        this.outputHandler = outputHandler;
+public class OutputNode implements ICircuitComponent {
+    private String name;
+    private Boolean value;
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
-    public void setInputValueFor(Node node, boolean value) {
-        super.setInputValueFor(node, value);
+    public Map<ICircuitComponent, Boolean> getResult() {
+        Map<ICircuitComponent, Boolean> result = new HashMap<>();
 
-        if (hasValueForAllInputs() && outputHandler != null) {
-            outputHandler.handleOutput(this);
-        }
+        result.put(this, value);
+
+        return result;
     }
 
     @Override
-    public String getNodeType() { return "OUT"; }
-
-    public boolean getResult() {
-        return values.values().iterator().next();
+    public void setValue(ICircuitComponent sender, Boolean value) {
+        this.value = value;
     }
 
     @Override
-    public boolean getLastResult() {
-        return values.values().iterator().next();
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String getType() {
+        return "PROBE";
     }
 }

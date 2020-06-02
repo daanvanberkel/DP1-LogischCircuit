@@ -36,7 +36,7 @@ public class CircuitController extends MouseAdapter {
         // Handle clicks on NodeView
         if (e.getSource() instanceof NodeView) {
             NodeView view = (NodeView) e.getSource();
-            Node node = view.getNode();
+            ICircuitComponent node = view.getNode();
 
             // Only toggle node if the clicked node is an inputNode
             if (node instanceof InputNode) {
