@@ -28,6 +28,7 @@ public class ReadFileController {
         HashMap<String, String> output = new HashMap<>();
 
         for (String line : lines) {
+            // readline(line) ?
             if (line.length() < 1) {
                 break;
             }
@@ -41,6 +42,7 @@ public class ReadFileController {
             boolean parsingNodeName = true;
 
             for (char c : line.toCharArray()) {
+                // readCharacter() ?
                 if (c == ':') {
                     // Found the end of the name
                     parsingNodeName = false;

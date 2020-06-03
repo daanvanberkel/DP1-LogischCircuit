@@ -18,12 +18,27 @@ public class MainView extends JPanel{
     public MainView(CircuitController circuitcontroller) {
         controller = circuitcontroller;
 
+        createRootFrame();
+    }
+
+    private void createRootFrame(){
         frame = new JFrame();
         frame.setTitle("LogischCircuit");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setPreferredSize(new Dimension(screenSize.width, screenSize.height));
 
+        createMenu();
+
+        panel = new JPanel(new BorderLayout());
+        frame.setContentPane(panel);
+
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+
+    private void createMenu(){
         menuBar = new JMenuBar();
 
         menu = new JMenu("Circuits");
@@ -45,15 +60,7 @@ public class MainView extends JPanel{
         }
 
         menuBar.add(menu);
-
         frame.setJMenuBar(menuBar);
-
-        panel = new JPanel(new BorderLayout());
-        frame.setContentPane(panel);
-
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
     }
 
     public void getCircuit(String path) {

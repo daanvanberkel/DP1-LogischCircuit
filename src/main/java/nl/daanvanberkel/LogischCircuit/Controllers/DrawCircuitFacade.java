@@ -26,23 +26,8 @@ public class DrawCircuitFacade {
 
         CircuitBuilder circuitBuilder = new CircuitBuilder(nodeFactory);
 
-        for (Map.Entry<String, String> nodeDefinition : nodeDefinitions.entrySet()) {
-            try {
-                circuitBuilder.addNode(nodeDefinition.getKey(), nodeDefinition.getValue());
-            } catch (UnsupportedGateTypeException e) {
-                // TODO: Show error message when unsupported gate detected
-            }
-        }
-
-        for(Map.Entry<String, String> nodeConnection : nodeConnections.entrySet()) {
-            String[] connections = nodeConnection.getValue().split(",");
-
-            try {
-                circuitBuilder.connectNodes(nodeConnection.getKey(), connections);
-            } catch (InvalidNodeConnectionException e) {
-                // TODO: Show error message when nodes cannot connect
-            }
-        }
+        addNodeToCircuit(circuitBuilder, nodeDefinitions);
+        connectNodesInCircuit(circuitBuilder, nodeConnections);
 
         try {
             circuit = circuitBuilder.buildCircuit();
@@ -57,8 +42,31 @@ public class DrawCircuitFacade {
         circuit.start();
     }
 
+    private void addNodeToCircuit(CircuitBuilder circuitBuilder, HashMap<String, String> nodeDefinitions){
+        for (Map.Entry<String, String> nodeDefinition : nodeDefinitions.entrySet()) {
+            try {
+                circuitBuilder.addNode(nodeDefinition.getKey(), nodeDefinition.getValue());
+            } catch (UnsupportedGateTypeException e) {
+                errorMessage = "A unsupported gate has been found";
+                return;
+            }
+        }
+    }
+
+    private void connectNodesInCircuit(CircuitBuilder circuitBuilder, HashMap<String, String> nodeConnections){
+        for(Map.Entry<String, String> nodeConnection : nodeConnections.entrySet()) {
+            String[] connections = nodeConnection.getValue().split(",");
+
+            try {
+                circuitBuilder.connectNodes(nodeConnection.getKey(), connections);
+            } catch (InvalidNodeConnectionException e) {
+                errorMessage = "Nodes cannot be connected";
+                return;
+            }
+        }
+    }
+
     private void prepareFactory(){
-        // TODO: Use dependency injection for all the node types
         nodeFactory.addNodeType("AND", AndGate.class);
         nodeFactory.addNodeType("INPUT_LOW", InputLowNode.class);
         nodeFactory.addNodeType("INPUT_HIGH", InputHighNode.class);
