@@ -12,10 +12,10 @@ public class NandGateTests {
         NandGate input2 = new NandGate();
 
         NandGate gate = new NandGate();
-        gate.addInputNode(input1);
-        gate.addInputNode(input2);
-        gate.setInputValueFor(input1, false);
-        gate.setInputValueFor(input2, false);
+        gate.addChild(input1);
+        gate.addChild(input2);
+        gate.setValue(input1, false);
+        gate.setValue(input2, false);
 
         assertTrue(gate.computeResult());
     }
@@ -26,10 +26,10 @@ public class NandGateTests {
         NandGate input2 = new NandGate();
 
         NandGate gate = new NandGate();
-        gate.addInputNode(input1);
-        gate.addInputNode(input2);
-        gate.setInputValueFor(input1, true);
-        gate.setInputValueFor(input2, false);
+        gate.addChild(input1);
+        gate.addChild(input2);
+        gate.setValue(input1, true);
+        gate.setValue(input2, false);
 
         assertTrue(gate.computeResult());
     }
@@ -40,10 +40,10 @@ public class NandGateTests {
         NandGate input2 = new NandGate();
 
         NandGate gate = new NandGate();
-        gate.addInputNode(input1);
-        gate.addInputNode(input2);
-        gate.setInputValueFor(input1, true);
-        gate.setInputValueFor(input2, true);
+        gate.addChild(input1);
+        gate.addChild(input2);
+        gate.setValue(input1, true);
+        gate.setValue(input2, true);
 
         assertFalse(gate.computeResult());
     }
@@ -52,6 +52,6 @@ public class NandGateTests {
     public void nandGateShouldReturnRightType() {
         NandGate gate = new NandGate();
 
-        assertEquals("NAND", gate.getNodeType());
+        assertEquals("NAND", gate.getType());
     }
 }

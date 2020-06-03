@@ -12,10 +12,10 @@ public class OrGateTests {
         OrGate input2 = new OrGate();
 
         OrGate gate = new OrGate();
-        gate.addInputNode(input1);
-        gate.addInputNode(input2);
-        gate.setInputValueFor(input1, false);
-        gate.setInputValueFor(input2, false);
+        gate.addChild(input1);
+        gate.addChild(input2);
+        gate.setValue(input1, false);
+        gate.setValue(input2, false);
 
         assertFalse(gate.computeResult());
     }
@@ -26,10 +26,10 @@ public class OrGateTests {
         OrGate input2 = new OrGate();
 
         OrGate gate = new OrGate();
-        gate.addInputNode(input1);
-        gate.addInputNode(input2);
-        gate.setInputValueFor(input1, true);
-        gate.setInputValueFor(input2, false);
+        gate.addChild(input1);
+        gate.addChild(input2);
+        gate.setValue(input1, true);
+        gate.setValue(input2, false);
 
         assertTrue(gate.computeResult());
     }
@@ -40,10 +40,10 @@ public class OrGateTests {
         OrGate input2 = new OrGate();
 
         OrGate gate = new OrGate();
-        gate.addInputNode(input1);
-        gate.addInputNode(input2);
-        gate.setInputValueFor(input1, true);
-        gate.setInputValueFor(input2, true);
+        gate.addChild(input1);
+        gate.addChild(input2);
+        gate.setValue(input1, true);
+        gate.setValue(input2, true);
 
         assertTrue(gate.computeResult());
     }
@@ -52,7 +52,7 @@ public class OrGateTests {
     public void orGateShouldReturnRightType() {
         OrGate gate = new OrGate();
 
-        assertEquals("OR", gate.getNodeType());
+        assertEquals("OR", gate.getType());
     }
 
 }

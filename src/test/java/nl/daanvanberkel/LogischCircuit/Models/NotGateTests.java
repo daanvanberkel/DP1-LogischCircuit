@@ -11,8 +11,8 @@ public class NotGateTests {
         NotGate input = new NotGate();
 
         NotGate gate = new NotGate();
-        gate.addInputNode(input);
-        gate.setInputValueFor(input, true);
+        gate.addChild(input);
+        gate.setValue(input, true);
 
         assertFalse(gate.computeResult());
     }
@@ -22,8 +22,8 @@ public class NotGateTests {
         NotGate input = new NotGate();
 
         NotGate gate = new NotGate();
-        gate.addInputNode(input);
-        gate.setInputValueFor(input, false);
+        gate.addChild(input);
+        gate.setValue(input, false);
 
         assertTrue(gate.computeResult());
     }
@@ -32,6 +32,6 @@ public class NotGateTests {
     public void notGateShouldReturnRightType() {
         NotGate gate = new NotGate();
 
-        assertEquals("NOT", gate.getNodeType());
+        assertEquals("NOT", gate.getType());
     }
 }

@@ -1,7 +1,7 @@
 package nl.daanvanberkel.LogischCircuit.Models;
 
 public class XorGate extends Gate {
-    protected boolean computeResult() {
+    public Boolean computeResult() {
         Boolean lastValue = null;
 
         for (boolean value : values.values()) {
@@ -16,5 +16,7 @@ public class XorGate extends Gate {
     }
 
     @Override
-    public String getNodeType() { return "XOR"; }
+    public String getType() {
+        return "XOR";
+    }
 }

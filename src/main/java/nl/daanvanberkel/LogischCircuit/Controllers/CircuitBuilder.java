@@ -4,17 +4,14 @@ import nl.daanvanberkel.LogischCircuit.Exceptions.InfiniteLoopException;
 import nl.daanvanberkel.LogischCircuit.Exceptions.InvalidNodeConnectionException;
 import nl.daanvanberkel.LogischCircuit.Exceptions.ProbeNotReachedException;
 import nl.daanvanberkel.LogischCircuit.Exceptions.UnsupportedGateTypeException;
-import nl.daanvanberkel.LogischCircuit.Models.Circuit;
-import nl.daanvanberkel.LogischCircuit.Models.InputNode;
-import nl.daanvanberkel.LogischCircuit.Models.Node;
-import nl.daanvanberkel.LogischCircuit.Models.OutputNode;
+import nl.daanvanberkel.LogischCircuit.Models.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class CircuitBuilder {
 
-    private final HashMap<String, Node> nodes = new HashMap<>();
+    private final HashMap<String, ICircuitComponent> nodes = new HashMap<>();
     private final NodeFactory factory;
 
     public CircuitBuilder(NodeFactory factory) {
@@ -22,7 +19,7 @@ public class CircuitBuilder {
     }
 
     public void addNode(String name, String type) throws UnsupportedGateTypeException {
-        Node node = factory.createNode(type);
+        ICircuitComponent node = factory.createNode(type);
 
         if (node == null) {
             throw new UnsupportedGateTypeException("Node " + type + " cannot be handled by this system.");
@@ -39,33 +36,27 @@ public class CircuitBuilder {
     }
 
     public void connectNodes(String fromName, String toName) throws InvalidNodeConnectionException {
-        Node fromNode = nodes.get(fromName);
-        Node toNode = nodes.get(toName);
+        ICircuitComponent fromNode = nodes.get(fromName);
+        ICircuitComponent toNode = nodes.get(toName);
 
         if (fromNode == null || toNode == null) {
             throw new InvalidNodeConnectionException("Cannot connect node " + fromName + " to " + toName + ". To from node or to node doesn't exist.");
         }
 
-        fromNode.addOutputNode(toNode);
-        toNode.addInputNode(fromNode);
+        if (fromNode instanceof CircuitComposite) {
+            CircuitComposite composite = (CircuitComposite) fromNode;
+            composite.addChild(toNode);
+        } else {
+            throw new InvalidNodeConnectionException("Cannot connect node " + fromName + " to " + toName + ". The from node cannot contain children.");
+        }
     }
 
     public Circuit buildCircuit() throws InfiniteLoopException, ProbeNotReachedException {
         Circuit circuit = new Circuit();
 
-        for(Node node : nodes.values()) {
+        for(ICircuitComponent node : nodes.values()) {
             if (node instanceof InputNode) {
-                circuit.addInputNode((InputNode) node);
-            }
-
-            if (node instanceof OutputNode) {
-                OutputNode outputNode = (OutputNode) node;
-
-                if (outputNode.getInputNodes().size() < 1) {
-                    throw new ProbeNotReachedException("Probe " + outputNode.getName() + " cannot be reached.");
-                }
-
-                circuit.addOutputNode(outputNode);
+                circuit.addChild(node);
             }
         }
 
@@ -75,10 +66,10 @@ public class CircuitBuilder {
     }
 
     private void detectInfiniteLoop(Circuit circuit) throws InfiniteLoopException {
-        ArrayList<Node> foundNodes = new ArrayList<>();
+        ArrayList<ICircuitComponent> foundNodes = new ArrayList<>();
 
         try {
-            for (InputNode in : circuit.getInputNodes()) {
+            for (ICircuitComponent in : circuit.getChildren()) {
                 detectInfiniteLoopNodes(in, foundNodes);
             }
         } catch (StackOverflowError e) {
@@ -86,8 +77,14 @@ public class CircuitBuilder {
         }
     }
 
-    private void detectInfiniteLoopNodes(Node node, ArrayList<Node> foundNodes) throws InfiniteLoopException {
-        for(Node n : node.getOutputNodes()) {
+    private void detectInfiniteLoopNodes(ICircuitComponent node, ArrayList<ICircuitComponent> foundNodes) throws InfiniteLoopException {
+        if (!(node instanceof CircuitComposite)) {
+            return;
+        }
+
+        CircuitComposite composite = (CircuitComposite) node;
+
+        for(ICircuitComponent n : composite.getChildren()) {
             foundNodes.add(n);
             detectInfiniteLoopNodes(n, foundNodes);
         }

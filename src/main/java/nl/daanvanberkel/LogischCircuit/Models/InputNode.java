@@ -1,23 +1,17 @@
 package nl.daanvanberkel.LogischCircuit.Models;
 
-public abstract class InputNode extends Node {
-    protected boolean initialValue;
-
+public abstract class InputNode extends CircuitComposite {
     public void toggleValue() {
-        initialValue = !initialValue;
+        lastResult = !lastResult;
     }
 
-    public void start() {
-        for(Node node : outputNodes) {
-            node.setInputValueFor(this, initialValue);
+    @Override
+    public String getType() { return "IN"; }
+
+    @Override
+    public void setValue(ICircuitComponent sender, Boolean value) {
+        for(ICircuitComponent child : children) {
+            child.setValue(this, lastResult);
         }
-    }
-
-    @Override
-    public String getNodeType() { return "IN"; }
-
-    @Override
-    public boolean getLastResult() {
-        return initialValue;
     }
 }

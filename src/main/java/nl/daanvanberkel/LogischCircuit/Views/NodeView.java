@@ -1,7 +1,7 @@
 package nl.daanvanberkel.LogischCircuit.Views;
 
 import nl.daanvanberkel.LogischCircuit.Controllers.CircuitController;
-import nl.daanvanberkel.LogischCircuit.Models.Node;
+import nl.daanvanberkel.LogischCircuit.Models.ICircuitComponent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,21 +9,21 @@ import java.awt.*;
 public class NodeView extends JComponent {
     private static final int NODE_PADDING = 10;
 
-    private final Node node;
+    private final ICircuitComponent node;
     private final CircuitController controller;
 
-    public NodeView(Node node, CircuitController controller) {
+    public NodeView(ICircuitComponent node, CircuitController controller) {
         super();
         this.node = node;
         this.controller = controller;
     }
 
-    public Node getNode() {
+    public ICircuitComponent getNode() {
         return node;
     }
 
     public void init() {
-        String nodeString = node.getName() + " " + node.getNodeType();
+        String nodeString = node.getName() + " " + node.getType();
 
         int stringHeight = getFontMetrics(getFont()).getHeight();
         int stringWidth = getFontMetrics(getFont()).stringWidth(nodeString);
@@ -49,6 +49,6 @@ public class NodeView extends JComponent {
         g2.drawRect(getX(), getY(), recWidth, recHeight);
 
         // Draw name and type of the node in the rectangle
-        g2.drawString(node.getName() + " " + node.getNodeType(), getX() + NODE_PADDING, getY() + (recHeight - NODE_PADDING));
+        g2.drawString(node.getName() + " " + node.getType(), getX() + NODE_PADDING, getY() + (recHeight - NODE_PADDING));
     }
 }

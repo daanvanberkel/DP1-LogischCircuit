@@ -2,10 +2,12 @@ package nl.daanvanberkel.LogischCircuit.Models;
 
 public class NandGate extends Gate {
     @Override
-    protected boolean computeResult() {
-        return values.values().contains(false);
+    public Boolean computeResult() {
+        return values.containsValue(false);
     }
 
     @Override
-    public String getNodeType() { return "NAND"; }
+    public String getType() {
+        return "NAND";
+    }
 }
