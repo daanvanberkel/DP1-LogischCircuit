@@ -62,6 +62,7 @@ public class ReadFileController {
             if (c == ':') {
                 // Found the end of the name
                 parsingNodeName = false;
+
                 continue;
             }
 
