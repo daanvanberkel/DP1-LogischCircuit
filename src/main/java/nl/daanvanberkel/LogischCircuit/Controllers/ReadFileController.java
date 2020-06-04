@@ -78,9 +78,13 @@ public class ReadFileController {
     public HashMap<String, String> getNodeConnections(String path) {
         String[] lines = readFile(path);
         HashMap<String, String> output = new HashMap<>();
+        boolean parsing = false;
 
         for (String line : lines) {
             if (line.length() < 1) {
+                parsing = true;
+                continue;
+            } else if (!parsing) {
                 continue;
             }
 
