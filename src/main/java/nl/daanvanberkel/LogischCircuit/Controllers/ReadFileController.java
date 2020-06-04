@@ -25,15 +25,20 @@ public class ReadFileController {
 
     public HashMap<String, String> readLines(String[] lines, boolean isNodeLine){
         HashMap<String, String> output = new HashMap<>();
+        boolean parsing = false;
 
         for (String line : lines) {
             if (line.length() < 1) {
                 if(isNodeLine){
+                    parsing = true;
                     continue;
                 }
                 else{
                     break;
                 }
+            }
+            else if (!parsing && isNodeLine) {
+                continue;
             }
 
             if (line.charAt(0) == '#') {
