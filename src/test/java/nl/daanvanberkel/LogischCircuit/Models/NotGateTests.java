@@ -34,4 +34,11 @@ public class NotGateTests {
 
         assertEquals("NOT", gate.getType());
     }
+
+    @Test
+    public void notGateShouldReturnFalseWhenThereAreNoInputs() {
+        NotGate gate = new NotGate();
+
+        assertFalse(gate.computeResult());
+    }
 }

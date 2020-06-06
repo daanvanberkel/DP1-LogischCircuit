@@ -34,9 +34,6 @@ public class DrawCircuitFacade {
         } catch (InfiniteLoopException e) {
             errorMessage = "Cannot show circuit with infinite loop!";
             return;
-        } catch (ProbeNotReachedException e) {
-            errorMessage = "Cannot show circuit with unreachable probes!";
-            return;
         }
 
         circuit.start();

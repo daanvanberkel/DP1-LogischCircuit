@@ -2,7 +2,6 @@ package nl.daanvanberkel.LogischCircuit.Controllers;
 
 import nl.daanvanberkel.LogischCircuit.Exceptions.InfiniteLoopException;
 import nl.daanvanberkel.LogischCircuit.Exceptions.InvalidNodeConnectionException;
-import nl.daanvanberkel.LogischCircuit.Exceptions.ProbeNotReachedException;
 import nl.daanvanberkel.LogischCircuit.Exceptions.UnsupportedGateTypeException;
 import nl.daanvanberkel.LogischCircuit.Models.*;
 
@@ -51,7 +50,7 @@ public class CircuitBuilder {
         }
     }
 
-    public Circuit buildCircuit() throws InfiniteLoopException, ProbeNotReachedException {
+    public Circuit buildCircuit() throws InfiniteLoopException {
         Circuit circuit = new Circuit();
 
         for(ICircuitComponent node : nodes.values()) {
@@ -77,7 +76,7 @@ public class CircuitBuilder {
         }
     }
 
-    private void detectInfiniteLoopNodes(ICircuitComponent node, ArrayList<ICircuitComponent> foundNodes) throws InfiniteLoopException {
+    private void detectInfiniteLoopNodes(ICircuitComponent node, ArrayList<ICircuitComponent> foundNodes) {
         if (!(node instanceof CircuitComposite)) {
             return;
         }
