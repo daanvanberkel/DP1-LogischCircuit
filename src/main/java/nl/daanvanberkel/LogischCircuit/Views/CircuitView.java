@@ -46,9 +46,11 @@ public class CircuitView extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        drawNodes(g);
+        drawNodeConnections(g);
+    }
 
+    private void drawNodes(Graphics g){
         // Get window sizes
         int width = getSize().width;
         int height = getSize().height;
@@ -60,15 +62,23 @@ public class CircuitView extends JPanel {
             int y = ((height / level.getValue().size()) / 2) - (getFontMetrics(getFont()).getHeight() / 2);
 
             for(ICircuitComponent node : level.getValue()) {
-                NodeView nodeView = nodeViews.get(node);
-                nodeView.setBounds(x, y, nodeView.getPreferredSize().width, nodeView.getPreferredSize().height);
-                nodeView.paintComponent(g);
+                drawNode(node, x, y, g);
 
                 y += height / level.getValue().size();
             }
         }
+    }
 
-        // Draw edges between the nodes
+    private void drawNode(ICircuitComponent node, int x, int y, Graphics g){
+        NodeView nodeView = nodeViews.get(node);
+        nodeView.setBounds(x, y, nodeView.getPreferredSize().width, nodeView.getPreferredSize().height);
+        nodeView.paintComponent(g);
+    }
+
+    private void drawNodeConnections(Graphics g){
+        Graphics2D g2 = (Graphics2D) g;
+
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         for(Map.Entry<ICircuitComponent, NodeView> nodePoint : nodeViews.entrySet()) {
             ICircuitComponent node = nodePoint.getKey();
             NodeView nodeView = nodePoint.getValue();

@@ -23,108 +23,89 @@ public class ReadFileController {
         return lines.toArray(new String[0]);
     }
 
-    public HashMap<String, String> getNodes(String path) {
-        String[] lines = readFile(path);
+    public HashMap<String, String> readLines(String[] lines, boolean isNodeLine){
         HashMap<String, String> output = new HashMap<>();
+        boolean parsing = false;
 
         for (String line : lines) {
-            // readline(line) ?
             if (line.length() < 1) {
-                break;
+                if(isNodeLine){
+                    parsing = true;
+                    continue;
+                }
+                else{
+                    break;
+                }
+            }
+            else if (!parsing && isNodeLine) {
+                continue;
             }
 
             if (line.charAt(0) == '#') {
                 continue;
             }
 
-            String nodeName = "";
-            String nodeType = "";
-            boolean parsingNodeName = true;
+            HashMap<String, String> nodeDetails = getCharacters(line.toCharArray());
 
-            for (char c : line.toCharArray()) {
-                // readCharacter() ?
-                if (c == ':') {
-                    // Found the end of the name
-                    parsingNodeName = false;
-                    continue;
-                }
+            output.put(nodeDetails.get("nodeName"), nodeDetails.get("nodeInfo"));
+        }
 
-                if (c == ';') {
-                    // Found end of the statement
-                    break;
-                }
+        return output;
+    }
 
-                if (c == ' ') {
-                    // Skip is character is an empty space
-                    continue;
-                }
+    private HashMap<String, String> getCharacters(char[] characters){
+        String nodeName = "";
+        String nodeInfo = "";
+        boolean parsingNodeName = true;
 
-                if (parsingNodeName) {
-                    nodeName += c;
-                } else {
-                    nodeType += c;
-                }
+        for (char c : characters) {
+            if (c == ':') {
+                // Found the end of the name
+                parsingNodeName = false;
+
+                continue;
             }
 
-            nodeName = nodeName.trim();
-            nodeType = nodeType.trim();
+            if (c == ';') {
+                // Found end of the statement
+                break;
+            }
 
-            output.put(nodeName, nodeType);
+            if (c == ' ') {
+                // Skip is character is an empty space
+                continue;
+            }
+
+            if (parsingNodeName) {
+                nodeName += c;
+            } else {
+                nodeInfo += c;
+            }
         }
+
+        nodeName = nodeName.trim();
+        nodeInfo = nodeInfo.trim();
+
+        HashMap<String, String> nodeDetails = new HashMap<>();
+
+        nodeDetails.put("nodeName", nodeName);
+        nodeDetails.put("nodeInfo", nodeInfo);
+
+        return nodeDetails;
+    }
+
+    public HashMap<String, String> getNodes(String path) {
+        String[] lines = readFile(path);
+
+        HashMap<String, String> output = readLines(lines, false);
 
         return output;
     }
 
     public HashMap<String, String> getNodeConnections(String path) {
         String[] lines = readFile(path);
-        HashMap<String, String> output = new HashMap<>();
-        boolean parsing = false;
 
-        for (String line : lines) {
-            if (line.length() < 1) {
-                parsing = true;
-                continue;
-            } else if (!parsing) {
-                continue;
-            }
-
-            if (line.charAt(0) == '#') {
-                continue;
-            }
-
-            String nodeName = "";
-            String connectingNodeNames = "";
-            boolean parsingNodeName = true;
-
-            for(char c: line.toCharArray()) {
-                if (c == ':') {
-                    // Found the end of the name
-                    parsingNodeName = false;
-                    continue;
-                }
-
-                if (c == ';') {
-                    // Found end of the statement
-                    break;
-                }
-
-                if (c == ' ') {
-                    // Skip is character is an empty space
-                    continue;
-                }
-
-                if (parsingNodeName) {
-                    nodeName += c;
-                } else {
-                    connectingNodeNames += c;
-                }
-            }
-
-            nodeName = nodeName.trim();
-            connectingNodeNames = connectingNodeNames.trim();
-
-            output.put(nodeName, connectingNodeNames);
-        }
+        HashMap<String, String> output = readLines(lines, true);
 
         return output;
     }
